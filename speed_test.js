@@ -130,6 +130,11 @@ body{
  </div>
 </div>
 
+updates every 5 seconds
+<div id="speed">speed: 0kbs</div>
+<div id="average">average: 0kbs</div>
+
+
 
 <script id='web_worker_one' type='javascript/worker'>
 self.onmessage  = function(e) {
@@ -149,6 +154,46 @@ const src =e.data
 
 </script>
  <body>
+    <script type="text/javascript">
+  check();
+
+  function check() {
+    console.log('what')
+    const xhr = new XMLHttpRequest();
+    const url = `?cache=${Math.floor( Math.random() * 10000) }`;
+    const data = return_random_string(); 
+    let start_time, end_time;
+      speed = 0;
+      console.log('wh')
+          xhr.open('POST', url, true);
+             console.log(url)
+    start_time = performance.now()
+    xhr.send(data);
+    xhr.onreadystatechange = function(event) {
+        console.log('wja')
+
+      if (xhr.readyState ===  4) {
+        end_time = performance.now();
+        console.log(end_time-start_time)
+
+        const speed = 1/ (end_time - start_time) * 1000
+        console.log(speed)
+    };
+  };
+}
+  function return_random_string() {
+   //prevents gzip effect (a compression technique when process large file or data )
+   const character_set = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~!@#$%^&*()_+`-=[]\{}|;':,./<>?";
+      result = '';
+      //using += is the fastest method to concentrate string 
+    for (let i = 0; i <  1024 * 1024; i++) 
+      result += character_set[Math.floor(Math.random() * character_set.length)];
+    return result;
+};
+
+setInterval(check,5000);
+</script>
+    <!--
 <script>
 
 
@@ -254,33 +299,17 @@ window.onload = function(){
 
 }
 
-function testUpload(){
-       var http = new XMLHttpRequest();
-var startTime, endTime;
-const myData = "a".repeat(1024 * 1024  )
-const file = new Blob([myData],{type: 'text/plain'});
-let textfile = window.URL.createObjectURL(file)
-const formatData = new FormData();
-formatData.append("file",textfile)
-http.open("POST",window.location.href)
-http.send()
-startTime = (new Date()).getTime();
-
-
-http.onreadystatechange = function() {
-    if(http.status !== 0){
-const time = ((new Date()).getTime() - startTime)
-console.log(time) 
-console.log((file.size / 1024/1024 ) / time  * 1000)
-}
-
-}
 
 
 
-}
+
 
 
 </script>
+-->
+<script>
+
+</script>
 </body>
+
 </html>
