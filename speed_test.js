@@ -117,7 +117,7 @@ body{
 <button>Click here to testing</button>
 <div id='parent_circle'>
 <div class='circle' id='circle_background' style='--color:#232f4e;'></div>
-<div class='circle' id='circle_range'style='--percentage:39;--color:blue;'></div>
+<div class='circle' id='circle_range'style='--percentage:39;--color:#49e8f5;'></div>
 <div id='all_number'>
 <div id='zero'>0</div>
 <div id='one'>1</div>
@@ -129,12 +129,6 @@ body{
 <div id='hundred'>100</div>
  </div>
 </div>
-
-updates every 5 seconds
-<div id="speed">speed: 0kbs</div>
-<div id="average">average: 0kbs</div>
-
-
 
 <script id='web_worker_one' type='javascript/worker'>
 self.onmessage  = function(e) {
@@ -151,33 +145,21 @@ const src =e.data
 
 </script>
 <script id='web_worker_two' type='javascript/worker'>
-
-</script>
- <body>
-    <script type="text/javascript">
-  check();
-
-  function check() {
-    console.log('what')
+    self.onmessage = ()=>get_upload_speed();
+ function get_upload_speed() {
     const xhr = new XMLHttpRequest();
-    const url = `?cache=${Math.floor( Math.random() * 10000) }`;
+    const url = `https://google.com`;
     const data = return_random_string(); 
     let start_time, end_time;
       speed = 0;
-      console.log('wh')
-          xhr.open('POST', url, true);
-             console.log(url)
+    xhr.open('POST', url, true);
     start_time = performance.now()
     xhr.send(data);
     xhr.onreadystatechange = function(event) {
-        console.log('wja')
-
       if (xhr.readyState ===  4) {
         end_time = performance.now();
-        console.log(end_time-start_time)
-
-        const speed = 1/ (end_time - start_time) * 1000
-        console.log(speed)
+        const speed = new Blob([result]).size /1024/ 1024 / (end_time - start_time) * 1000
+        self.postMessage(speed)
     };
   };
 }
@@ -188,24 +170,28 @@ const src =e.data
       //using += is the fastest method to concentrate string 
     for (let i = 0; i <  1024 * 1024; i++) 
       result += character_set[Math.floor(Math.random() * character_set.length)];
+  console.log(new Blob([result]).size)
     return result;
 };
-
-setInterval(check,5000);
 </script>
-    <!--
+ <body>
+    <script type="text/javascript">
+
+</script>
 <script>
 
 
 const imagesize = 5241768 //in bytes
 const src = "https://upload.wikimedia.org/wikipedia/commons/5/55/2012-03-21_21-34-00-startrails.jpg"
-const loading_time_array = []
-const loading_speed_array = []
+const downloading_speed_array = [];
+const uploading_speed_array = []
+
+
 const all_range =  document.querySelectorAll('#all_number > div')
 const circle_range = document.querySelector('#circle_range')
-document.querySelector('button').addEventListener('click', assign);
 let number = 0;
-function assign(){
+
+function get_download_speed(){
       const blob = new Blob([
     document.querySelector('#web_worker_one').textContent
   ], {
@@ -214,17 +200,16 @@ function assign(){
 
   const worker = new Worker(window.URL.createObjectURL(blob));
   worker.onmessage = function(e) {
-    loading_time_array.push(e.data)
     //e.data/1000 =>convert from milliseconds to minutes
     //imagesize * 8 => convert imagesize from byte to bits 
     // '/1024' => convert to kbs
     // '/1024' => convert to mbs
     const current_speed = (imagesize * 8 / (e.data/1000)/1024/1024).toFixed(2)
-    loading_speed_array.push(current_speed)
+    downloading_speed_array.push(current_speed)
     const percentage = calculate_percentage(current_speed)
     circle_range.style.setProperty('--percentage',percentage)
     console.log(current_speed)
-    if(loading_time_array.length < 30) assign()
+    if(downloading_speed_array.length < 30) get_download_speed()
   }
   number+=1;
   worker.postMessage(`${src}?${new Date().getTime()}`);
@@ -253,7 +238,7 @@ function calculate_percentage(speed){
     else if(speed <= 20){
         passed_number = 10
          change_text_color(passed_number)
-        return (speed - passed_number) / (20 - passed_number) * 6.5 + 36;
+        return (speed - passed_number) / (20 - passed_number) * 6.5 + 35;
 
     } 
     else if(speed <= 30){
@@ -276,40 +261,43 @@ function calculate_percentage(speed){
 
 function change_text_color(max_passed_number){
     all_range.forEach(i=>i.classList.remove('shining'))
-   console.log(max_passed_number)
     all_range.forEach(i=>{
-       if(i.textContent <= max_passed_number){
-       i.classList.add('shining')
-        //i.style.textShadow = '1px 1px 10px #fff, 1px 1px 10px #ccc;';
-       }
+       if(i.textContent <= max_passed_number) i.classList.add('shining')
     })
 }
 
 window.onload = function(){
-    testUpload()
- 
-    all_range.forEach((i,index)=>{
-        i.style.animation = `0.2s ease-in ${index / 5}s 1 appearing`
+    get_download_speed()
+        all_range.forEach((i,index)=>{
+        i.style.animation = `0.125s ease-in ${index / 8}s 1 appearing`
         i.addEventListener('animationend',()=>i.style.opacity =1)
-   
     })
-
-
-   
+    //get_upload_speed()
+ 
 
 }
 
+function get_upload_speed(){
+      const blob = new Blob([
+    document.querySelector('#web_worker_two').textContent
+  ], {
+    type: "text/javascript"
+  })
 
+  const worker = new Worker(window.URL.createObjectURL(blob));
+  worker.onmessage = function(e) {
+    uploading_speed_array.push(e.data);
+    const percentage = calculate_percentage(e.data)
+    circle_range.style.setProperty('--percentage',percentage)
+    if(uploading_speed_array.length < 30) get_upload_speed()
+  }
+  number+=1;
+  worker.postMessage("start");
+}
 
-
-
-
-
+ 
 </script>
--->
-<script>
 
-</script>
 </body>
 
 </html>
