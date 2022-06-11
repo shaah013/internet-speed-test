@@ -105,7 +105,7 @@ body{
 .shining{
      color:#fff !important;
       text-shadow:1px 1px 10px #fff, 1px 1px 10px #ccc;
-      animation: 2s shine linear infinite !important;
+      animation: 2s shine linear infinite ;
 }
 @keyframes shine{
     from{
@@ -115,15 +115,14 @@ body{
 
 
 #trapezoid{
-        border-bottom: 150px solid red;
-    border-left: 10px solid transparent;
-    border-right: 10px solid transparent;
-    height: 0;
-     width: 20px;
+  clip-path: polygon(0 100%, 25% 0, 80% 0, 100% 100%);
+   background-image: linear-gradient(to bottom,rgba(250,250,250,0.85), transparent);
+    height: 150px;
+     width: 35px;
      position: absolute;
      left:  calc(50vw - 30px/2);
   bottom: 35vh;
-  transform: rotate(125deg);
+  transform: rotate(-125deg);
 transform-origin: bottom center;
 }
     </style>
@@ -186,7 +185,6 @@ const src =e.data
       //using += is the fastest method to concentrate string 
     for (let i = 0; i <  1024 * 1024; i++) 
       result += character_set[Math.floor(Math.random() * character_set.length)];
-  console.log(new Blob([result]).size)
     return result;
 };
 </script>
@@ -203,7 +201,7 @@ const imagesize = 5241768 //in bytes
 const src = "https://upload.wikimedia.org/wikipedia/commons/5/55/2012-03-21_21-34-00-startrails.jpg"
 const downloading_speed_array = [];
 const uploading_speed_array = []
-
+const arrow = document.querySelector('#trapezoid')
 const all_range =  document.querySelectorAll('#all_number > div')
 const circle_range = document.querySelector('#circle_range')
 let number = 0;
@@ -233,43 +231,62 @@ function get_download_speed(){
 
 //it is very hard to determine how to give the percentage for circle_range since the circle doesn't distributed equally
 function calculate_percentage(speed){
-
     //the circle_range reach 1 mb when circle range has a percentage of 9
     let passed_number = null;
     if(speed <= 1){
-       passed_number = 0;
+         passed_number = 0;
+        //1 is at transform: rotate(-89deg);
+       arrow.style.transform = `rotate(${- 123 + (speed - passed_number) / (1 - passed_number) * 34}deg) `
+      
         change_text_color(passed_number)
         return (speed - passed_number) / (1 - passed_number) * 9;
     } 
     else if(speed <= 5){
-     passed_number = 1;
+        passed_number = 1;
+        //5 is at transform: rotate(-59deg);
+    arrow.style.transform = `rotate(${- 89 + (speed - passed_number) / (5 - passed_number) * 30}deg) `
+     
     return (speed - passed_number) / (5 - passed_number) * 9 + 9;
     } 
     else if(speed <= 10){
         passed_number = 5;
+        // 10 is at transform: rotate(-27deg);
+         arrow.style.transform = `rotate(${- 57 + (speed - passed_number) / (10 - passed_number) * 32}deg) `
          change_text_color(passed_number)
     return (speed - passed_number) / (10 - passed_number) * 10 + 18;
 
     } 
     else if(speed <= 20){
-        passed_number = 10
+          passed_number = 10
+         // 20 is at transform: rotate(27deg);
+         arrow.style.transform = `rotate(${-27 + (speed - passed_number) / (20 - passed_number) * 54}deg) `
+      
          change_text_color(passed_number)
         return (speed - passed_number) / (20 - passed_number) * 6.5 + 35;
 
     } 
     else if(speed <= 30){
         passed_number =20
+        //30 is at transform: rotate(57deg);
+         arrow.style.transform = `rotate(${27 + (speed - passed_number) / (30 - passed_number) * 30}deg) `
+        
          change_text_color(passed_number)
         return (speed - passed_number) / (30 - passed_number) * 10 + 42.5;
 
     } 
     else if(speed <= 50){
         passed_number = 30;
+        //50 is at transform: rotate(89deg);
+         arrow.style.transform = `rotate(${ 57+ (speed - passed_number) / (50 - passed_number) * 32}deg) `       
         change_text_color(passed_number)
         return (speed - passed_number) / (50 - passed_number) * 8.5 + 52.5;
     } 
     else if(speed <= 100){
-       passed_number = 50;
+        passed_number = 50;
+               //50 is at transform: rotate(125deg);
+         arrow.style.transform = `rotate(${89 + (speed - passed_number) / (100 - passed_number) * 36}deg) `
+       
+       
        change_text_color(passed_number)
        return (speed - passed_number) / (100 - passed_number) * 9 * 61;
     } 
@@ -284,6 +301,7 @@ function change_text_color(max_passed_number){
 
 window.onload = function(){
     get_download_speed()
+ arrow.style.transition = 'transform 0.1s ease-in'
         all_range.forEach((i,index)=>{
         i.style.animation = `0.125s ease-in ${index / 8}s 1 appearing`
         i.addEventListener('animationend',()=>i.style.opacity =1)
