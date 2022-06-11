@@ -45,7 +45,7 @@ body{
       background-size:0 0,auto;
 }
 
-#parent_circle > div{
+#parent_circle > div:not(#current_speed){
     position: absolute;
     bottom: 0;
     left: calc(50vw - 500px/2);
@@ -125,12 +125,20 @@ body{
   transform: rotate(-125deg);
 transform-origin: bottom center;
 }
+#current_speed{
+    font-size: 2.5em;
+    color: white;
+    position: absolute;
+    bottom: 10vh;
+    left: 45vw;
+
+}
     </style>
  </head>
 <button>Click here to testing</button>
 <div id='parent_circle'>
 <div class='circle' id='circle_background' style='--color:#232f4e;'></div>
-<div class='circle' id='circle_range'style='--percentage:39;--color:#49e8f5;'></div>
+<div class='circle' id='circle_range'style='--percentage:27;--color:rgba(0,0,255,0.75);'></div>
 <div id='all_number'>
 <div id='zero'>0</div>
 <div id='one'>1</div>
@@ -141,7 +149,9 @@ transform-origin: bottom center;
 <div id='fifty'>50</div>
 <div id='hundred'>100</div>
  </div>
+ <div id='current_speed'></div>
 </div>
+
 
 <div id='trapezoid'></div>
 
@@ -162,6 +172,7 @@ const src =e.data
 <script id='web_worker_two' type='javascript/worker'>
     self.onmessage = ()=>get_upload_speed();
  function get_upload_speed() {
+    console.log('what')
     const xhr = new XMLHttpRequest();
     const url = `https://google.com`;
     const data = return_random_string(); 
@@ -220,6 +231,7 @@ function get_download_speed(){
     // '/1024' => convert to kbs
     // '/1024' => convert to mbs
     const current_speed = (imagesize * 8 / (e.data/1000)/1024/1024).toFixed(2)
+    document.querySelector('#current_speed').textContent = current_speed
     downloading_speed_array.push(current_speed)
     const percentage = calculate_percentage(current_speed)
     circle_range.style.setProperty('--percentage',percentage)
@@ -259,10 +271,9 @@ function calculate_percentage(speed){
     else if(speed <= 20){
           passed_number = 10
          // 20 is at transform: rotate(27deg);
-         arrow.style.transform = `rotate(${-27 + (speed - passed_number) / (20 - passed_number) * 54}deg) `
-      
+        arrow.style.transform = `rotate(${-27 + (speed - passed_number) / (20 - passed_number) * 54}deg) `
          change_text_color(passed_number)
-        return (speed - passed_number) / (20 - passed_number) * 6.5 + 35;
+        return (speed - passed_number) / (20 - passed_number) * 15.5 + 27;
 
     } 
     else if(speed <= 30){
@@ -277,7 +288,7 @@ function calculate_percentage(speed){
     else if(speed <= 50){
         passed_number = 30;
         //50 is at transform: rotate(89deg);
-         arrow.style.transform = `rotate(${ 57+ (speed - passed_number) / (50 - passed_number) * 32}deg) `       
+         arrow.style.transform = `rotate(${57+ (speed - passed_number) / (50 - passed_number) * 32}deg) `       
         change_text_color(passed_number)
         return (speed - passed_number) / (50 - passed_number) * 8.5 + 52.5;
     } 
@@ -286,10 +297,14 @@ function calculate_percentage(speed){
                //50 is at transform: rotate(125deg);
          arrow.style.transform = `rotate(${89 + (speed - passed_number) / (100 - passed_number) * 36}deg) `
        
-       
        change_text_color(passed_number)
-       return (speed - passed_number) / (100 - passed_number) * 9 * 61;
+       return (speed - passed_number) / (100 - passed_number) * 9 + 61;
     } 
+    else{
+         arrow.style.transform = "rotate(130deg)"
+        //the full circle is 70
+        return 70;
+    }
 }
 
 function change_text_color(max_passed_number){
@@ -300,13 +315,13 @@ function change_text_color(max_passed_number){
 }
 
 window.onload = function(){
-    get_download_speed()
- arrow.style.transition = 'transform 0.1s ease-in'
+    //get_download_speed()
+ arrow.style.transition = 'transform 0.1s ease-out'
         all_range.forEach((i,index)=>{
         i.style.animation = `0.125s ease-in ${index / 8}s 1 appearing`
         i.addEventListener('animationend',()=>i.style.opacity =1)
     })
-    //get_upload_speed()
+    get_upload_speed()
  
 
 }
@@ -322,10 +337,11 @@ function get_upload_speed(){
   worker.onmessage = function(e) {
     uploading_speed_array.push(e.data);
     const percentage = calculate_percentage(e.data)
+    console.log(e.data)
     circle_range.style.setProperty('--percentage',percentage)
     if(uploading_speed_array.length < 30) get_upload_speed()
   }
-  number+=1;
+  console.log('wha')
   worker.postMessage("start");
 }
 
