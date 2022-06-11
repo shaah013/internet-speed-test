@@ -100,7 +100,7 @@ body{
 #hundred{
      position: absolute;
      top: -150px;
-    left: 370px;
+    left: 375px;
 }
 .shining{
      color:#fff !important;
@@ -111,6 +111,20 @@ body{
     from{
         text-shadow:1px 1px 10px #fff, 1px 1px 10px white;
     }
+}
+
+
+#trapezoid{
+        border-bottom: 150px solid red;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    height: 0;
+     width: 20px;
+     position: absolute;
+     left:  calc(50vw - 30px/2);
+  bottom: 35vh;
+  transform: rotate(125deg);
+transform-origin: bottom center;
 }
     </style>
  </head>
@@ -129,6 +143,8 @@ body{
 <div id='hundred'>100</div>
  </div>
 </div>
+
+<div id='trapezoid'></div>
 
 <script id='web_worker_one' type='javascript/worker'>
 self.onmessage  = function(e) {
@@ -179,13 +195,14 @@ const src =e.data
 
 </script>
 <script>
-
+//setInterval(()=>{
+//    document.querySelector("#trapezoid").style.transform = `rotate(${Math.random() * 720}deg)`
+//},5000)
 
 const imagesize = 5241768 //in bytes
 const src = "https://upload.wikimedia.org/wikipedia/commons/5/55/2012-03-21_21-34-00-startrails.jpg"
 const downloading_speed_array = [];
 const uploading_speed_array = []
-
 
 const all_range =  document.querySelectorAll('#all_number > div')
 const circle_range = document.querySelector('#circle_range')
@@ -208,7 +225,6 @@ function get_download_speed(){
     downloading_speed_array.push(current_speed)
     const percentage = calculate_percentage(current_speed)
     circle_range.style.setProperty('--percentage',percentage)
-    console.log(current_speed)
     if(downloading_speed_array.length < 30) get_download_speed()
   }
   number+=1;
