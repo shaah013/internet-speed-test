@@ -1,7 +1,7 @@
 /* 
 
 
-Following codes are the codes I have been tried to get the download speed, the method I am using is to add "?" with current date time at the end of the url to parent cashe tecnique of broswer and make it treate every request as new request  
+Following codes are the codes I have been tried to get the download speed, the method I am using is to add "?" with current date time at the end of the url to parent cashe tecnique of broswer and make it treate every request as new request and send request to the desried server 
 
 
 */
