@@ -41,12 +41,17 @@ Doesn't work, at the first time, it will work as expected, but broswer has the c
 image stored in the cache which makes the time for loading image become much faster which it very inaccurate.
 The simpest solution is to use window.location.reload(), but it will also reload all the previous loaded JS script and css file which takes time.
 Unfortunately, broswer don't have function like image.reload().
+
 */
 
 
 
 
-// Wrap the image with an iframe and use iframe.contentWindow.locatin.reload()
+/*
+
+Wrap the image with an iframe and use iframe.contentWindow.locatin.reload();
+
+*/
 let interval, iframe
 const imagesize = 5241768
 let click = true
@@ -78,35 +83,41 @@ function test() {
 test()
 
   /* 
+  
+  
   Doesn't work and will produce error: Uncaught DOMException: Blocked a frame with origin "null" from accessing a cross-origin frame.
   Broswer (Chrome) blocked user from dicretly accessing the iframe through broswer because of security problem, a solution is to use local web server or disable the
   cross domain web security / same origin policy disabled, but this is not pure client-side code or will not work for all users (since need to disable the same origin
   policy.
+  
+  
   */
 
 
 
-  // Disbale the cache in the head section by using meta tag:
-  //Include following code in the head:
-  <
-  meta http - equiv = "cache-control"
+  /*
+  
+  Disbale the cache in the head section by using meta tag:
+  Include following code in the head:
+  
+  */
+
+  <meta http - equiv = "cache-control"
 content = "no-cache, no-store, must-revalidate" >
-  <
-  meta http - equiv = "pragma"
-content = "no-cache" >
-  <
-  meta http - equiv = "expires"
-content = "0" >
+  <meta http - equiv = "pragma" content = "no-cache" >
+  <meta http - equiv = "expires" content = "0" >
 
   /*
+  
   This is very unstable and none of them are valid in HTML5, it is often included in the header from server giving backed data. 
-  Currently not working and unable to prevent cache.  
+  Currently not working and unable to prevent cache. 
+  
   */
 
 
 
   // include ? at the end of the url and a random number:
-  const imagesize = 5241768
+const imagesize = 5241768
 let interval = setInterval(function() {
   const testspeed = navigator.connection.downlink
   if (testspeed >= 10)
@@ -129,8 +140,8 @@ function test() {
 
 This is the most common and stable/best solution I currently could find to prevent cache technique. By adding ? in the end of the URL and add a random unique number. Broswer will
 treat every request as a new request and will not use cache technique.
-However, this way may add unnessary delays which is against the speed test orignial goal (be more accurate as possible). 
-Also, this will fill broswer cashe with hundreds copies of same things.
-It is always not a good idea to change url.
+
+However, this will fill broswer cashe with hundreds copies of same things.
+It is always not a good idea to change url, but this is the current I am using under ECMAScript 2021 background
 
 */
