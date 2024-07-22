@@ -1,5 +1,4 @@
 self.onmessage = () => get_upload_speed();
-
 function get_upload_speed() {
   const xhr = new XMLHttpRequest();
   const url = `https://google.com/?${new Date().getTime()}`;
@@ -17,9 +16,7 @@ function get_upload_speed() {
     };
   };
 }
-
 function return_random_string() {
-  //prevents gzip effect (a compression technique when process large file or data ) 
   const character_set = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789~!@#$%^&*()_+`-=[]\{}|;':,./<> ? ";
   result = ''; //using += is the fastest method to concentrate string 
   for (let i = 0; i < 1024 * 512; i++)
